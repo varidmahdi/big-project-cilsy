@@ -4,9 +4,9 @@ pipeline {
         stage ('build landingpage') {
             steps {
                 sh '''
-                    sudo docker build -t cilsyari/landingpage:$GIT_BRANCH-$BUILD_ID -f landingpage/landingpage.Dockerfile .
-                    sudo docker login -u cilsyari -p$DOCKER_TOKEN
-                    sudo docker push cilsyari/landingpage:$GIT_BRANCH-$BUILD_ID
+                    sudo docker build -t varidmahdi/landingpage:$GIT_BRANCH-$BUILD_ID -f landingpage/ops/Dockerfile.landingpage .
+                    sudo docker login -u varidmahdi -p$DOCKER_TOKEN
+                    sudo docker push varidmahdi/landingpage:$GIT_BRANCH-$BUILD_ID
                 '''
             }
         }
@@ -33,8 +33,8 @@ pipeline {
         stage ('deploy to k8s cluster') {
             steps {
                 sshagent(credentials : ['k8s-master-ari']){
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.kubernetes.retiarno.my.id tar -xvzf jenkins/manifest.tar.gz'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.kubernetes.retiarno.my.id kubectl apply -f kube'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id tar -xvzf jenkins/manifest.tar.gz'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f kube'
                 }
             }
         }
