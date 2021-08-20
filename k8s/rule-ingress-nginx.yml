@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: landing-page-ingress
+  name: landingpage-ingress
   namespace: production
   annotations:
     ## Untuk menaikan batas upload file
@@ -15,5 +15,5 @@ spec:
         paths:
           #- path: /belajar
           - backend:
-              serviceName: landing-page
+              serviceName: landingpage
               servicePort: 80
