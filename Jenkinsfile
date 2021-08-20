@@ -13,9 +13,9 @@ pipeline {
         stage ('change manifest file and send') {
             steps {
                 sh '''
-                    sed -i -e "s/branch/$GIT_BRANCH/" kube/landing.yml
-                    sed -i -e "s/appversion/$BUILD_ID/" kube/landing.yml
-                    tar -czvf manifest.tar.gz kube/landing.yml
+                    sed -i -e "s/branch/$GIT_BRANCH/" k8s/landing.yml
+                    sed -i -e "s/appversion/$BUILD_ID/" k8s/landing.yml
+                    tar -czvf manifest.tar.gz k8s/landing.yml
                 '''
                 sshPublisher(
                     continueOnError: false, 
