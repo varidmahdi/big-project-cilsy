@@ -18,7 +18,7 @@ spec:
       containers:
         - name: landing-page
           imagePullPolicy: Always
-          image: varidmahdi/landingpage:$GIT_BRANCH-$BUILD_ID
+          image: varidmahdi/landingpage:branch-appversion
           ports:
             - containerPort: 80
 ---
