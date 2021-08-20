@@ -34,7 +34,7 @@ pipeline {
             steps {
                 sshagent(credentials : ['k8s-master-farid']){
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id tar -xvzf jenkins/manifest.tar.gz'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f kube'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f k8s'
                 }
             }
         }
