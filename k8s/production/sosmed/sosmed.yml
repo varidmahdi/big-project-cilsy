@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: pesbuk
-          image: varidmahdi/pesbuk:branch-appversion
+          image: varidmahdi/sosmed:branch-appversion
           ports:
             - containerPort: 80
           env:
