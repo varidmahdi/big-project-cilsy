@@ -48,7 +48,14 @@ pipeline {
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/namespace/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/landingpage/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/sosmed/'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/wordpress/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/ingress/'
+                }
+            }
+        }
+        stage ('clean workspace') {
+            steps {
+                sshagent(credentials : ['k8s-master-farid']){
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf k8s/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf jenkins/'
                 }
