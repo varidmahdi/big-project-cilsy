@@ -11,7 +11,7 @@ metadata:
 spec:
   rules:
     ## Service Location n Characters
-    - host: pesbuk.sdcilsy-beta.my.id
+    - host: pesbuk.lokaljuara.id
       http:
         paths:
           # - path: /
