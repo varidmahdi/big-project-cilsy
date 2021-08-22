@@ -10,11 +10,22 @@ pipeline {
                 '''
             }
         }
+        stage ('build sosmed') {
+            steps {
+                sh '''
+                    sudo docker build -t varidmahdi/sosmed:$GIT_BRANCH-$BUILD_ID -f sosmed/ops/Dockerfile.sosmed .
+                    sudo docker login -u varidmahdi -p$DOCKER_TOKEN
+                    sudo docker push varidmahdi/sosmed:$GIT_BRANCH-$BUILD_ID
+                '''
+            }
+        }
         stage ('change manifest file and send') {
             steps {
                 sh '''
-                    sed -i -e "s/branch/$GIT_BRANCH/" k8s/landingpage.yml
-                    sed -i -e "s/appversion/$BUILD_ID/" k8s/landingpage.yml
+                    sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/landingpage/landingpage.yml
+                    sed -i -e "s/appversion/$BUILD_ID/" k8s/production/landingpage/landingpage.yml
+                    sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/sosmed/sosmed.yml
+                    sed -i -e "s/appversion/$BUILD_ID/" k8s/production/sosmed/sosmed.yml
                     tar -czvf manifest.tar.gz k8s/*
                 '''
                 sshPublisher(
@@ -34,8 +45,8 @@ pipeline {
             steps {
                 sshagent(credentials : ['k8s-master-farid']){
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id tar -xvzf jenkins/manifest.tar.gz'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/namespace/'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/namespace/'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/landingpage/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/ingress/'
                 }
             }
