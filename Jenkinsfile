@@ -68,9 +68,9 @@ pipeline {
                     string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
                     sh '''
                         curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode="HTML" -d text="
-                        <b>Project</b> : Big Project Cilsy /n
-                        <b>Branch</b>: $GIT_BRANCH /n
-                        <b>Build</b> : OK /n
+                        <b>Project</b> : Big Project Cilsy
+                        <b>Branch</b>: $GIT_BRANCH
+                        <b>Build</b> : OK
                         <b>Test suite</b> = Passed"
                         '''
                     }
