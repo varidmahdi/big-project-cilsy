@@ -58,6 +58,7 @@ pipeline {
                 sshagent(credentials : ['k8s-master-farid']){
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf k8s/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf jenkins/'
+                    sh 'printenv'
                 }
             }
         }
@@ -67,7 +68,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
                     string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
                     sh '''
-                        curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode="HTML" -d text="<b>Project</b> : Big Project Cilsy %0A <b>Branch</b> : $GIT_BRANCH %0A <b>Deploying</b> : Success"
+                        curl -s -X POST https://api.telegram.org/bot${TOKEN}/sendMessage -d chat_id=${CHAT_ID} -d parse_mode="HTML" -d text="<b>Project</b> : Big Project Cilsy %0A<b>Branch</b> : $GIT_BRANCH %0A<b>Deploying</b> : Success"
                         '''
                     }
                 }
