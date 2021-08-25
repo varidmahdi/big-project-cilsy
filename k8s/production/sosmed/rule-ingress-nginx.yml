@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: pesbuk-ingress
+  name: sosmed-ingress
   namespace: production
   annotations:
     ## Untuk menaikan batas upload file
@@ -11,10 +11,10 @@ metadata:
 spec:
   rules:
     ## Service Location n Characters
-    - host: pesbuk.lokaljuara.id
+    - host: sosmed.lokaljuara.id
       http:
         paths:
           # - path: /
           - backend:
-              serviceName: pesbuk
+              serviceName: sosmed
               servicePort: 80

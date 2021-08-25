@@ -8,8 +8,8 @@ RUN echo "\nclear_env = no" >> /etc/php/7.2/fpm/pool.d/www.conf
 COPY sosmed/ /var/www/html/
 # Nginx config
 RUN rm /etc/nginx/sites-enabled/default
-ADD sosmed/ops/pesbuk.conf /etc/nginx/sites-available/
-RUN ln -s /etc/nginx/sites-available/pesbuk.conf /etc/nginx/sites-enabled/pesbuk.conf
+ADD sosmed/ops/sosmed.conf /etc/nginx/sites-available/
+RUN ln -s /etc/nginx/sites-available/sosmed.conf /etc/nginx/sites-enabled/sosmed.conf
 # Expose ports.
 EXPOSE 80
 # RUN PHP and NGINX

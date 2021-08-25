@@ -53,15 +53,14 @@ pipeline {
                 }
             }
         }
-        stage ('clean workspace') {
+        /*stage ('clean workspace') {
             steps {
                 sshagent(credentials : ['k8s-master-farid']){
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf k8s/'
                     sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf jenkins/'
-                    sh 'printenv'
                 }
             }
-        }
+        }*/
         stage('Push Notification') {
             steps {
                 script{

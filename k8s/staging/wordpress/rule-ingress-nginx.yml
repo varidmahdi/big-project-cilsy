@@ -1,8 +1,8 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: landingpage-ingress
-  namespace: production
+  name: wordpress-ingress
+  namespace: staging
   annotations:
     ## Untuk menaikan batas upload file
     nginx.org/client-max-body-size: "10m"
@@ -10,10 +10,11 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   rules:
-    - host: landing.lokaljuara.id
+    ## Service Location n Characters
+    - host: stag.blog.lokaljuara.id
       http:
         paths:
-          #- path: /belajar
+          # - path: /
           - backend:
-              serviceName: landingpage
+              serviceName: wordpress
               servicePort: 80
