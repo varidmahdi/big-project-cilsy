@@ -19,6 +19,14 @@ pipeline {
                 '''
             }
         }
+        stage ('clean workspace') {
+            steps {
+                sshagent(credentials : ['k8s-master-farid']){
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf k8s/'
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf jenkins/'
+                }
+            }
+        }
         stage ('change manifest file and send') {
             parallel {
                 stage ('for production') {
@@ -31,7 +39,7 @@ pipeline {
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/production/landingpage/landingpage.yml
                             sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/sosmed/sosmed.yml
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/production/sosmed/sosmed.yml
-                            tar -czvf manifest-production.tar.gz k8s/*
+                            tar -czvf manifest-production.tar.gz k8s/production/*
                         '''
                         sshPublisher(
                             continueOnError: false, 
@@ -56,7 +64,7 @@ pipeline {
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/staging/landingpage/landingpage.yml
                             sed -i -e "s/branch/$GIT_BRANCH/" k8s/staging/sosmed/sosmed.yml
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/staging/sosmed/sosmed.yml
-                            tar -czvf manifest-staging.tar.gz k8s/*
+                            tar -czvf manifest-staging.tar.gz k8s/staging/*
                         '''
                         sshPublisher(
                             continueOnError: false, 
@@ -86,14 +94,6 @@ pipeline {
                 }
             }
         }
-        /*stage ('clean workspace') {
-            steps {
-                sshagent(credentials : ['k8s-master-farid']){
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf k8s/'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id rm -rf jenkins/'
-                }
-            }
-        }*/
         stage('Push Notification') {
             steps {
                 script{
