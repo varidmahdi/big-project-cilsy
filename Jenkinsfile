@@ -20,26 +20,59 @@ pipeline {
             }
         }
         stage ('change manifest file and send') {
-            steps {
-                sh '''
-                    sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/landingpage/landingpage.yml
-                    sed -i -e "s/appversion/$BUILD_ID/" k8s/production/landingpage/landingpage.yml
-                    sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/sosmed/sosmed.yml
-                    sed -i -e "s/appversion/$BUILD_ID/" k8s/production/sosmed/sosmed.yml
-                    tar -czvf manifest.tar.gz k8s/*
-                '''
-                sshPublisher(
-                    continueOnError: false, 
-                    failOnError: true,
-                    publishers: [
-                        sshPublisherDesc(
-                            configName: "k8s-master",
-                            transfers: [sshTransfer(sourceFiles: 'manifest.tar.gz', remoteDirectory: 'jenkins/')],
-                            verbose: true
+            parallel {
+                stage ('for production') {
+                    when {
+                        branch 'main'
+                    }
+                    steps {
+                        sh '''
+                            sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/landingpage/landingpage.yml
+                            sed -i -e "s/appversion/$BUILD_ID/" k8s/production/landingpage/landingpage.yml
+                            sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/sosmed/sosmed.yml
+                            sed -i -e "s/appversion/$BUILD_ID/" k8s/production/sosmed/sosmed.yml
+                            tar -czvf manifest-production.tar.gz k8s/*
+                        '''
+                        sshPublisher(
+                            continueOnError: false, 
+                            failOnError: true,
+                            publishers: [
+                                sshPublisherDesc(
+                                    configName: "k8s-master",
+                                    transfers: [sshTransfer(sourceFiles: 'manifest-production.tar.gz', remoteDirectory: 'jenkins/')],
+                                    verbose: true
+                                )
+                            ]
                         )
-                    ]
-                )
+                    }
+                }
+                stage ('for staging') {
+                    when {
+                        branch 'staging'
+                    }
+                    steps {
+                        sh '''
+                            sed -i -e "s/branch/$GIT_BRANCH/" k8s/staging/landingpage/landingpage.yml
+                            sed -i -e "s/appversion/$BUILD_ID/" k8s/staging/landingpage/landingpage.yml
+                            sed -i -e "s/branch/$GIT_BRANCH/" k8s/staging/sosmed/sosmed.yml
+                            sed -i -e "s/appversion/$BUILD_ID/" k8s/staging/sosmed/sosmed.yml
+                            tar -czvf manifest-staging.tar.gz k8s/*
+                        '''
+                        sshPublisher(
+                            continueOnError: false, 
+                            failOnError: true,
+                            publishers: [
+                                sshPublisherDesc(
+                                    configName: "k8s-master",
+                                    transfers: [sshTransfer(sourceFiles: 'manifest-staging.tar.gz', remoteDirectory: 'jenkins/')],
+                                    verbose: true
+                                )
+                            ]
+                        )
+                    }
+                }
             }
+            
         }
         stage ('deploy to k8s cluster') {
             steps {
