@@ -39,7 +39,7 @@ pipeline {
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/production/landingpage/landingpage.yml
                             sed -i -e "s/branch/$GIT_BRANCH/" k8s/production/sosmed/sosmed.yml
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/production/sosmed/sosmed.yml
-                            tar -czvf manifest-production.tar.gz k8s/production/*
+                            tar -czvf manifest-production.tar.gz k8s/production/ k8s/ingress/
                         '''
                         sshPublisher(
                             continueOnError: false, 
@@ -64,7 +64,7 @@ pipeline {
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/staging/landingpage/landingpage.yml
                             sed -i -e "s/branch/$GIT_BRANCH/" k8s/staging/sosmed/sosmed.yml
                             sed -i -e "s/appversion/$BUILD_ID/" k8s/staging/sosmed/sosmed.yml
-                            tar -czvf manifest-staging.tar.gz k8s/staging/*
+                            tar -czvf manifest-staging.tar.gz k8s/staging/ k8s/ingress/
                         '''
                         sshPublisher(
                             continueOnError: false, 
@@ -83,14 +83,36 @@ pipeline {
             
         }
         stage ('deploy to k8s cluster') {
-            steps {
-                sshagent(credentials : ['k8s-master-farid']){
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id tar -xvzf jenkins/manifest.tar.gz'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/namespace/'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/landingpage/'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/sosmed/'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/wordpress/'
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/ingress/'
+            parallel {
+                stage ('for production') {
+                    when {
+                        branch 'main'
+                    }
+                    steps {
+                        sshagent(credentials : ['k8s-master-farid']){
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id tar -xvzf jenkins/manifest-production.tar.gz'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/namespace/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/landingpage/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/sosmed/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/production/wordpress/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/ingress/'
+                        }
+                    }
+                }
+                stage ('for staging') {
+                    when {
+                        branch 'staging'
+                    }
+                    steps {
+                        sshagent(credentials : ['k8s-master-farid']){
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id tar -xvzf jenkins/manifest-staging.tar.gz'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/staging/namespace/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/staging/landingpage/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/staging/sosmed/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/staging/wordpress/'
+                            sh 'ssh -o StrictHostKeyChecking=no ubuntu@api.lokaljuara.id kubectl apply -f ./k8s/ingress/'
+                        }
+                    }
                 }
             }
         }
