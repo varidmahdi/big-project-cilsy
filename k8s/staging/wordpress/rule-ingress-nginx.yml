@@ -11,7 +11,7 @@ metadata:
 spec:
   rules:
     ## Service Location n Characters
-    - host: stag.blog.lokaljuara.id
+    - host: stag-blog.lokaljuara.id
       http:
         paths:
           # - path: /

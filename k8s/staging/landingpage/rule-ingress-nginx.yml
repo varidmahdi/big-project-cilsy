@@ -10,7 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   rules:
-    - host: stag.landing.lokaljuara.id
+    - host: stag-landing.lokaljuara.id
       http:
         paths:
           #- path: /belajar

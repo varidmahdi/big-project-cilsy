@@ -11,7 +11,7 @@ metadata:
 spec:
   rules:
     ## Service Location n Characters
-    - host: stag.sosmed.lokaljuara.id
+    - host: stag-sosmed.lokaljuara.id
       http:
         paths:
           # - path: /
