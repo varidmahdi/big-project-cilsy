@@ -48,25 +48,25 @@ spec:
         tier: frontend
     spec:
       containers:
-        - image: wordpress:php7.4-fpm-alpine
+        - image: wordpress:php7.4-apache
           name: wordpress
           env:
-            - name: DB_NAME
+            - name: WORDPRESS_DB_NAME
               valueFrom:
                 secretKeyRef:
                   name: wordpress-secret
                   key: DB_NAME
-            - name: DB_USER
+            - name: WORDPRESS_DB_USER
               valueFrom:
                 secretKeyRef:
                   name: wordpress-secret
                   key: DB_USER
-            - name: DB_PASS
+            - name: WORDPRESS_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: wordpress-secret
                   key: DB_PASS
-            - name: DB_HOST
+            - name: WORDPRESS_DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: wordpress-secret
